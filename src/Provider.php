@@ -53,12 +53,24 @@ class Provider extends AbstractProvider implements ProviderInterface
      */
     protected function mapUserToObject(array $user)
     {
+        $location = isset($user['included'][0])
+            && isset($user['included'][0]['type'])
+            && $user['included'][0]['type'] === 'locations'
+                ? $user['included'][0]['attributes']
+                : null;
+
         return (new User())->setRaw($user)->map([
-            'id'       => $user['user']['data']['id'],
-            'nickname' => $user['user']['data']['username'],
-            'name'     => $user['user']['data']['name'],
-            'email'    => $user['user']['data']['email'],
-            'avatar'   => $user['user']['data']['avatar'],
+            'id'              => $user['data']['id'],
+            'nickname'        => $user['data']['attributes']['username'],
+            'name'            => $user['data']['attributes']['first_name'] . ' ' . $user['data']['attributes']['last_name'],
+            'first_name'      => $user['data']['attributes']['first_name'],
+            'last_name'       => $user['data']['attributes']['last_name'],
+            'email'           => $user['data']['attributes']['email'],
+            'avatar'          => $user['data']['attributes']['picture'],
+            'timezone'        => $user['data']['attributes']['time_zone'],
+            'timezone_offset' => $user['data']['attributes']['time_zone_offset'],
+            'linkedin_url'    => $user['data']['attributes']['linkedin_url'],
+            'location'        => $location,
         ]);
     }
 
